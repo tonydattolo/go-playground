@@ -22,6 +22,13 @@ func main() {
 	var b byte = 255                    // range: 0 to 255 **bytes are same as uint8
 	fmt.Println(i, j, k, l, m, n, o, p, q, r, b)
 
+	// Explicit Type Casting/Conversion
+	// Need to explicitly cast integer types in order to interact with each other
+	var int_x int = 10
+	var float64_y float64 = 30.2
+	var addThemFloat float64 = float64(x) + y
+	var addThemInt int = x + int(y)
+
 	// floats
 	var f float32 = 3.141592653589793 // default float32
 	var g float64 = 3.141592653589793 // default float64
