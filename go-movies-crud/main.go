@@ -15,16 +15,15 @@ import (
 )
 
 type Movie struct {
-	id string `json:"id"`
-	isbn string `json:"isbn"`
-	title string `json:"title"`
+	id       string    `json:"id"`
+	isbn     string    `json:"isbn"`
+	title    string    `json:"title"`
 	Director *Director `json:"director"`
-
 }
 
 type Director struct {
 	firstname string `json:"firstname"`
-	lastname string `json:"lastname"`
+	lastname  string `json:"lastname"`
 }
 
 // movies slice
@@ -35,11 +34,9 @@ func getMovies(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Fetching movies")
 	fmt.Println(movies)
 
-	if err := json.NewEncoder(w).Encode(movies); err != nil {
-		log.Fatal(err)
-	} else {
-		fmt.Println("Movies fetched")
-	}
+	json.NewEncoder(w).Encode(movies)
+
+	fmt.Println("Movies fetched")
 
 	// return a json object with key message and value "Movies retrieved"
 	// w.Write([]byte(`"message":"Movies retrieved"`))
@@ -58,6 +55,10 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 
 func createMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	// print the request body
+	fmt.Println("in create", r.Body)
+
 	var movie Movie
 	_ = json.NewDecoder(r.Body).Decode(&movie)
 	movie.id = strconv.Itoa(rand.Intn(10000000))
@@ -65,7 +66,7 @@ func createMovie(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Movie created"))
-	
+
 }
 
 func updateMovie(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +81,7 @@ func updateMovie(w http.ResponseWriter, r *http.Request) {
 			movies = append(movies, movie)
 			json.NewEncoder(w).Encode(movie)
 			w.WriteHeader(http.StatusOK)
-			
+
 			// return message to user saying that movie was updated
 			w.Write([]byte("Movie updated"))
 
@@ -115,10 +116,9 @@ func main() {
 	movies = append(movies, Movie{id: "6", isbn: "448748", title: "The Good, the Bad and the Ugly", Director: &Director{firstname: "Sergio", lastname: "Leone"}})
 	movies = append(movies, Movie{id: "7", isbn: "448749", title: "Fight Club", Director: &Director{firstname: "David", lastname: "Fincher"}})
 	movies = append(movies, Movie{id: "8", isbn: "448750", title: "The Dark Knight", Director: &Director{firstname: "Christopher", lastname: "Nolan"}})
-	
-	// print out the movies slice
-	fmt.Println(movies)
 
+	// print out the movies slice
+	// fmt.Println("1=====", movies)
 
 	// routes
 	r.HandleFunc("/movies", getMovies).Methods("GET")
@@ -133,8 +133,12 @@ func main() {
 		port = "8000"
 	}
 
+	// fmt.Println("2=========", movies)
+
 	fmt.Println("Server started on port " + port)
-	log.Fatal(http.ListenAndServe(":" + port, r))
+	log.Fatal(http.ListenAndServe(":"+port, r))
+
+	fmt.Println("3=====", movies)
 
 	// db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres password=postgres sslmode=disable")
 	// if err != nil {
@@ -146,10 +150,5 @@ func main() {
 	// db.Create(&Movie{ISBN: "23456", Title: "The Go Programming Language", Author: "Alan A. A. Donovan", Price: 100})
 	// db.Create(&Movie{ISBN: "34567", Title: "The Go Programming Language", Author: "Alan A. A. Donovan", Price: 100})
 	// db.Create(&Movie{ISBN: "45678", Title: "The Go Programming Language", Author: "Alan A. A. Donovan", Price: 100})
-
-
-	
-
-
 
 }
